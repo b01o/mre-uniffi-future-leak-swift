@@ -1,0 +1,34 @@
+[no-cd]
+build:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    cargo build
+
+    # clean up previous build and create output directory
+    rm -rf target/ffi
+    mkdir -p target/ffi
+    
+    cargo run --bin cli generate --library target/debug/libtest_future_ffi.dylib --language swift --out-dir target/ffi
+    cargo build --release --lib
+
+
+    # create namespace directory for generated header files
+    mkdir -p target/ffi/TestFutureFfi
+    mv target/ffi/test_future_ffiFFI.h target/ffi/TestFutureFfi/
+    mv target/ffi/test_future_ffiFFI.modulemap target/ffi/TestFutureFfi/module.modulemap
+
+    # create xcframework
+    xcodebuild -create-xcframework \
+        -library target/release/libtest_future_ffi.a \
+        -headers target/ffi/TestFutureFfi \
+        -output target/ffi/TestFutureFfi.xcframework
+
+    # remove the temporary namespace directory
+    rm -rf target/ffi/TestFutureFfi
+
+    open target/ffi
+
+
+
+
+

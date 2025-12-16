@@ -1,0 +1,17 @@
+[package]
+name    = "test_future_ffi"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["lib", "staticlib", "cdylib"]
+
+[[bin]]
+name = "cli"
+path = "src/cli.rs"
+
+[dependencies]
+uniffi = { version = "0.30.0", features = ["cli"] }
+
+[build-dependencies]
+uniffi = { version = "0.30.0", features = ["build"] }
